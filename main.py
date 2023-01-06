@@ -68,13 +68,8 @@ class Commands(commands.Cog):
     def __init__(self, bot: Globeado) -> None:
         self.bot = bot
 
-    @commands.command(name="test")
-    async def test(self, ctx: Context) -> None:
-        assert ctx.message is not None
-        await ctx.send("QUE RICO EL ANASO DEL HECTORINE")
-
-    @commands.command(name="sexo")
-    async def sexo(self, ctx: Context) -> None:
+    @commands.command(name="globodesexo")
+    async def globodesexo(self, ctx: Context) -> None:
         assert ctx.message is not None
 
         if not (ref_msg := ctx.message.reference):
