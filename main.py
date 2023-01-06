@@ -17,6 +17,7 @@ import uuid
 import discord
 import requests
 from asyncio.events import AbstractEventLoop
+from aiostream import stream
 from PIL import Image
 from functools import partial
 from pathlib import Path
@@ -77,29 +78,38 @@ class Commands(commands.Cog):
         assert ctx.message is not None
 
         if not (ref_msg := ctx.message.reference):
-            # Globear aca
-            print("Globear")
+            old_msgs = await stream.list(ctx.channel.history(limit=100))
+            for old_msg in old_msgs:
+                if len(old_msg.attachments) > 0:
+                    msg = old_msg
+                    break
         else:
-            # Globear
             if ref_msg.cached_message is None:
                 assert ref_msg.message_id is not None
                 msg = await ctx.fetch_message(ref_msg.message_id)
             else:
                 msg = ref_msg.cached_message
 
-            globo = await self.process(msg)
-            await ctx.send(file=globo)
+        globo = await self.process(msg)  # type: ignore
 
-    async def process(self, msg: discord.Message) -> Optional[discord.File]:
-        if embed_url := msg.embeds[0].url:
-            return await self.globear(embed_url)
+        assert globo is not None
+        with open(globo, "rb") as file:
+            to_send = discord.File(file)
+            await ctx.send(file=to_send)
+            os.remove(globo)
 
-    async def globear(self, url: str) -> discord.File:
+    async def process(self, msg: discord.Message) -> Optional[Path]:
+        if len(msg.embeds) > 0:
+            return await self.globear(msg.embeds[0].url)
+        elif len(msg.attachments) > 0:
+            return await self.globear(msg.attachments[0].url)
+
+    async def globear(self, url: Optional[str]) -> Path:
         img_path = DISCORD_IMAGES_PATH / f"{str(uuid.uuid4())}.png"
         downloadFile(url, img_path)
         return self.merge_images_vertically(img_path)
 
-    def merge_images_vertically(self, path: Path) -> discord.File:
+    def merge_images_vertically(self, path: Path) -> Path:
         globo_img = Image.open(GLOBO_FILE_PATH)
         img = Image.open(path)
 
@@ -126,10 +136,9 @@ class Commands(commands.Cog):
         globeado_path = DATA_PATH / f"{str(uuid.uuid4())}.gif"
         dst.save(globeado_path)
 
-        with open(globeado_path, "rb") as file:
-            to_send = discord.File(file)
+        os.remove(path)
 
-        return to_send
+        return globeado_path
 
 
 class Globeado(commands.Bot):
@@ -160,7 +169,8 @@ class Globeado(commands.Bot):
         await self.process_commands(msg)
 
 
-def downloadFile(url: str, path: Path) -> bool:
+def downloadFile(url: Optional[str], path: Path) -> bool:
+    assert url is not None
     resp = requests.get(url)
     if resp.status_code != 200:
         return False
