@@ -75,7 +75,7 @@ class Commands(commands.Cog):
         if not (ref_msg := ctx.message.reference):
             old_msgs = await stream.list(ctx.channel.history(limit=100))
             for old_msg in old_msgs:
-                if len(old_msg.attachments) > 0:
+                if len(old_msg.attachments) > 0 or len(old_msg.embeds) > 0:
                     msg = old_msg
                     break
         else:
