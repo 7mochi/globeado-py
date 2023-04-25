@@ -208,9 +208,7 @@ async def main() -> int:
 
     bot = Globeado(command_prefix="!", description=description, intents=intents)
     await bot.setup()
-    await bot.run(
-        "MTA2MDc0MjY3MzkyMjc4NTMxMA.GKWlav.bLDJVelPi5wqvXHcEpMWVOhnax4uUxI2e2QLoM",
-    )
+    await bot.run("REDACTED_TOKEN")
 
     return 0
 
