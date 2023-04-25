@@ -95,7 +95,12 @@ class Commands(commands.Cog):
 
     async def process(self, msg: discord.Message) -> Optional[Path]:
         if len(msg.embeds) > 0:
-            return await self.globear(msg.embeds[0].url)
+            embed = msg.embeds[0]
+
+            if embed.url is not None:
+                return await self.globear(embed.url)
+            else:
+                return await self.globear(embed.image.url)
         elif len(msg.attachments) > 0:
             return await self.globear(msg.attachments[0].url)
 
@@ -203,7 +208,9 @@ async def main() -> int:
 
     bot = Globeado(command_prefix="!", description=description, intents=intents)
     await bot.setup()
-    await bot.run("REDACTED_TOKEN")
+    await bot.run(
+        "MTA2MDc0MjY3MzkyMjc4NTMxMA.GKWlav.bLDJVelPi5wqvXHcEpMWVOhnax4uUxI2e2QLoM",
+    )
 
     return 0
 
