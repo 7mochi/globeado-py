@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "globeado.py"
+version = "1.1.0"
+authors = ["7mochi"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.13"
+python-dotenv = "^1.1.0"
+discord-py = "^2.5.2"
+structlog = "^25.2.0"
+aiostream = "^0.6.4"
+pillow = "^11.2.1"
+
+[tool.poetry.group.dev.dependencies]
+black = "^25.1.0"
+pre-commit = "^4.2.0"
+isort = "^6.0.1"
+autoflake = "^2.3.1"
+mypy = "^1.15.0"
+
+[tool.mypy]
+strict = true
+disallow_untyped_calls = false
+
+[tool.isort]
+add_imports = ["from __future__ import annotations"]
+force_single_line = true
+profile = "black"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

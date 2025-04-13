@@ -1,1 +1,5 @@
 /.data
+/.venv
+/.mypy_cache
+.env
+__pycache__/
